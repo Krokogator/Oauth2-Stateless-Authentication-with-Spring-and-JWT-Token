@@ -3,6 +3,7 @@ package com.tinmegali.security;
 import com.tinmegali.services.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -50,7 +51,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         endpoints
                 .authenticationManager(this.authenticationManager)
-                .tokenServices(tokenServices())
+                //.tokenServices(tokenServices())
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter());
     }
@@ -78,18 +79,19 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
                     .authorities("ROLE_TRUSTED_CLIENT")
                     .scopes("read", "write")
                     .resourceIds(resourceId)
-                    .accessTokenValiditySeconds(accessTokenValiditySeconds)
-                    .refreshTokenValiditySeconds(refreshTokenValiditySeconds)
-                    .secret("secret")
+                    .accessTokenValiditySeconds(3600)
+                    .refreshTokenValiditySeconds(604800)
+                    .secret("$2a$10$ePPx/3nSFjJA2ZQTr2T1rOnpO3hWiWt.GmUj0wL.Xh9sEzUSWrrYm")
                     .and()
                 .withClient("register-app")
                     .authorizedGrantTypes("client_credentials")
                     .authorities("ROLE_REGISTER")
                     .scopes("read")
                     .resourceIds(resourceId)
-                    .secret("secret")
-                .and()
-                    .withClient("my-client-with-registered-redirect")
+                    .secret("$2a$10$ePPx/3nSFjJA2ZQTr2T1rOnpO3hWiWt.GmUj0wL.Xh9sEzUSWrrYm")
+                    .redirectUris("http://anywhere?key=value")
+                    .and()
+                .withClient("my-client-with-registered-redirect")
                     .authorizedGrantTypes("authorization_code")
                     .authorities("ROLE_CLIENT")
                     .scopes("read", "trust")
