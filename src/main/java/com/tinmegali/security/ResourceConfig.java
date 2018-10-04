@@ -45,8 +45,10 @@ public class ResourceConfig extends ResourceServerConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/hello").access("hasAnyRole('USER')")
-                .antMatchers("/api/me").hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/register").hasAuthority("ROLE_REGISTER");
+                .antMatchers("/api/me").hasAnyRole("USER", "ADMIN");
+                //.antMatchers("/api/register").hasAuthority("ROLE_TRUSTED_CLIENT");
+
+
     }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {

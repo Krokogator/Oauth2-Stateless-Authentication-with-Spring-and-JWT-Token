@@ -48,16 +48,16 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     }
 
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints
                 .authenticationManager(this.authenticationManager)
-                //.tokenServices(tokenServices())
+                .tokenServices(tokenServices())
                 .tokenStore(tokenStore())
                 .accessTokenConverter(accessTokenConverter());
     }
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
+    public void configure(AuthorizationServerSecurityConfigurer oauthServer) {
         oauthServer
                 .tokenKeyAccess("isAnonymous() || hasAuthority('ROLE_TRUSTED_CLIENT')")
                 .checkTokenAccess("hasAuthority('ROLE_TRUSTED_CLIENT')");
@@ -66,37 +66,15 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
         clients.inMemory()
-                .withClient("normal-app")
-                    .authorizedGrantTypes("authorization_code", "implicit")
-                    .authorities("ROLE_CLIENT")
-                    .scopes("read", "write")
-                    .resourceIds(resourceId)
-                    .accessTokenValiditySeconds(accessTokenValiditySeconds)
-                    .refreshTokenValiditySeconds(refreshTokenValiditySeconds)
-                    .and()
-                .withClient("trusted-app")
-                    .authorizedGrantTypes("client_credentials", "password", "refresh_token")
-                    .authorities("ROLE_TRUSTED_CLIENT")
-                    .scopes("read", "write")
-                    .resourceIds(resourceId)
-                    .accessTokenValiditySeconds(3600)
-                    .refreshTokenValiditySeconds(604800)
-                    .secret("$2a$10$ePPx/3nSFjJA2ZQTr2T1rOnpO3hWiWt.GmUj0wL.Xh9sEzUSWrrYm")
-                    .and()
-                .withClient("register-app")
-                    .authorizedGrantTypes("client_credentials")
-                    .authorities("ROLE_REGISTER")
-                    .scopes("read")
-                    .resourceIds(resourceId)
-                    .secret("$2a$10$ePPx/3nSFjJA2ZQTr2T1rOnpO3hWiWt.GmUj0wL.Xh9sEzUSWrrYm")
-                    .redirectUris("http://anywhere?key=value")
-                    .and()
-                .withClient("my-client-with-registered-redirect")
-                    .authorizedGrantTypes("authorization_code")
-                    .authorities("ROLE_CLIENT")
-                    .scopes("read", "trust")
-                    .resourceIds("oauth2-resource")
-                    .redirectUris("http://anywhere?key=value");
+            .withClient("client")
+                .authorizedGrantTypes("client_credentials", "password", "refresh_token")
+                .authorities("ROLE_TRUSTED_CLIENT")
+                .scopes("read", "write")
+                .resourceIds(resourceId)
+                .accessTokenValiditySeconds(accessTokenValiditySeconds)
+                .refreshTokenValiditySeconds(refreshTokenValiditySeconds)
+                .secret("$2a$10$ePPx/3nSFjJA2ZQTr2T1rOnpO3hWiWt.GmUj0wL.Xh9sEzUSWrrYm");
+
     }
 
     @Bean
@@ -126,6 +104,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(true);
         defaultTokenServices.setTokenEnhancer(accessTokenConverter());
+        defaultTokenServices.setAccessTokenValiditySeconds(3600);
         return defaultTokenServices;
     }
 

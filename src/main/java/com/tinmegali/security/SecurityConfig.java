@@ -16,9 +16,12 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Configuration
-@EnableWebSecurity( debug = true )
+@EnableWebSecurity( debug = false )
 
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -45,8 +48,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
+        http.authorizeRequests()
+                .antMatchers("/api/register").anonymous()
                 .anyRequest().authenticated()
                 .antMatchers("/","/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
@@ -59,6 +62,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
 
 
 }
